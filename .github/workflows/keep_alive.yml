@@ -1,4 +1,15 @@
-- name: ping_supabase
+name: Keep Alive Supabase
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Roda todo dia ao meio-dia (UTC)
+  workflow_dispatch:      # Permite rodar manualmente pelo botão "Run workflow"
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+    - name: ping_supabase
   env:
     SUPABASE_URL: ${{ vars.SUPABASE_URL }}
     SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}

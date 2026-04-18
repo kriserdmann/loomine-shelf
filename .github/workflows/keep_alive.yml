@@ -1,17 +1,17 @@
-name: Supabase Keep Alive (New Pattern)
+name: Supabase Keep Alive
 
 on:
   schedule:
-    - cron: '0 0 * * 1,4' # Roda segunda e quinta
-  workflow_dispatch:
+    # Executa às 00:00 (UTC) de toda segunda e quinta-feira
+    - cron: '0 0 * * 1,4'
+  workflow_dispatch: # Permite que você execute manualmente para testar agora
 
 jobs:
   ping_supabase:
     runs-on: ubuntu-latest
     steps:
-      - name: Send Request to Data API
+      - name: Ping Profiles Table
         run: |
-          # Note o uso da Publishable Key no header 'apikey'
-          curl -i -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/sua_tabela?select=id&limit=1" \
+          curl -i -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/profiles?select=id&limit=1" \
           -H "apikey: ${{ secrets.SUPABASE_PUB_KEY }}" \
           -H "Authorization: Bearer ${{ secrets.SUPABASE_PUB_KEY }}"

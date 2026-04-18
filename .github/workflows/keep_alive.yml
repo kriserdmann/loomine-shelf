@@ -1,0 +1,17 @@
+name: Supabase Keep Alive (New Pattern)
+
+on:
+  schedule:
+    - cron: '0 0 * * 1,4' # Roda segunda e quinta
+  workflow_dispatch:
+
+jobs:
+  ping_supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Request to Data API
+        run: |
+          # Note o uso da Publishable Key no header 'apikey'
+          curl -i -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/sua_tabela?select=id&limit=1" \
+          -H "apikey: ${{ secrets.SUPABASE_PUB_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_PUB_KEY }}"

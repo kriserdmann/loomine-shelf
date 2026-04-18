@@ -1,17 +1,8 @@
-name: Supabase Keep Alive
-
-on:
-  schedule:
-    # Executa às 00:00 (UTC) de toda segunda e quinta-feira
-    - cron: '0 0 * * 1,4'
-  workflow_dispatch: # Permite que você execute manualmente para testar agora
-
-jobs:
-  ping_supabase:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Ping Profiles Table
-        run: |
-          curl -i -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/profiles?select=id&limit=1" \
-          -H "apikey: ${{ secrets.SUPABASE_PUB_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_PUB_KEY }}"
+- name: ping_supabase
+  env:
+    SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+    SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+  run: |
+    curl -i -X GET "${{ env.SUPABASE_URL }}/rest/v1/profiles?select=id&limit=1" \
+    -H "apikey: ${{ env.SUPABASE_ANON_KEY }}" \
+    -H "Authorization: Bearer ${{ env.SUPABASE_ANON_KEY }}"

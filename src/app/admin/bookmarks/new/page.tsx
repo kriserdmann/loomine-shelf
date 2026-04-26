@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server"
 import { createBookmark } from "../actions"
 import Link from 'next/link'
+import CategorySelector from "../CategorySelector"
 
 export default async function NewBookmarkPage() {
   const supabase = await createClient()
@@ -70,21 +71,7 @@ export default async function NewBookmarkPage() {
 
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-[var(--color-near-black)]">Category (Select multiple)</label>
-                <div className="flex flex-col gap-2 border border-[var(--color-border-cool)] rounded-md p-3 max-h-48 overflow-y-auto">
-                  {categories?.map(c => (
-                    <div key={c.id} className="flex items-center gap-2">
-                      <input 
-                        type="checkbox" 
-                        id={`cat_${c.id}`} 
-                        name="categories" 
-                        value={c.id}
-                        className="h-4 w-4 rounded border-gray-300 text-[var(--color-interaction-blue)] focus:ring-[var(--color-interaction-blue)]" 
-                      />
-                      <label htmlFor={`cat_${c.id}`} className="text-sm text-[var(--color-muted-slate)]">{c.name}</label>
-                    </div>
-                  ))}
-                </div>
+                <CategorySelector initialCategories={categories || []} />
              </div>
 
              <div className="flex flex-col gap-2">

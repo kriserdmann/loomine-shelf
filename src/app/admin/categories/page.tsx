@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server"
-import { revalidatePath } from "next/cache"
+import { createCategory } from "./actions"
+import CategoryItem from "./CategoryItem"
 
 export default async function CategoriesPage() {
   const supabase = await createClient()
@@ -8,19 +9,6 @@ export default async function CategoriesPage() {
     .from('categories')
     .select('*')
     .order('name')
-
-  async function createCategory(formData: FormData) {
-    "use server";
-    const name = formData.get('name') as string
-    if (!name) return;
-    
-    // Convert to slug
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    
-    const sb = await createClient();
-    await sb.from('categories').insert({ name, slug })
-    revalidatePath('/admin/categories')
-  }
 
   return (
     <div>
@@ -55,10 +43,7 @@ export default async function CategoriesPage() {
           ) : (
              <ul className="divide-y divide-[var(--color-border-light)]">
                {categories?.map((cat) => (
-                 <li key={cat.id} className="py-4 flex justify-between items-center group">
-                   <span className="text-sm font-medium text-[var(--color-near-black)] group-hover:text-[var(--color-interaction-blue)] transition">{cat.name}</span>
-                   <span className="text-xs font-mono text-[var(--color-muted-slate)] uppercase tracking-wider">{cat.slug}</span>
-                 </li>
+                 <CategoryItem key={cat.id} category={cat} />
                ))}
              </ul>
           )}

@@ -21,7 +21,22 @@ export default async function Home(props: { searchParams: Promise<{ [key: string
     .eq('is_public', true)
     
   if (q) {
-    query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%,url.ilike.%${q}%`)
+    const cleanQ = q.replace(/^#/, '');
+    
+    // Find tags that match the query
+    const { data: tagMatches } = await supabase
+      .from('bookmark_tags')
+      .select('bookmark_id, tags!inner(name)')
+      .ilike('tags.name', `%${cleanQ}%`);
+      
+    const matchingBookmarkIds = tagMatches?.map(tm => tm.bookmark_id) || [];
+    
+    if (matchingBookmarkIds.length > 0) {
+      const idsString = matchingBookmarkIds.join(',');
+      query = query.or(`title.ilike.%${cleanQ}%,description.ilike.%${cleanQ}%,url.ilike.%${cleanQ}%,id.in.(${idsString})`);
+    } else {
+      query = query.or(`title.ilike.%${cleanQ}%,description.ilike.%${cleanQ}%,url.ilike.%${cleanQ}%`);
+    }
   }
   
   if (categoryId) {
